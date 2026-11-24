@@ -1,0 +1,79 @@
+@model MojeCV.ViewModels.CvViewModel
+@{
+    ViewData["Title"] = "Moje CV";
+}
+
+<header class="mb-4">
+    <h1>@Model.Osoba.Imie @Model.Osoba.Nazwisko</h1>
+    <p class="lead">@Model.Osoba.Stanowisko</p>
+    <p class="text-muted">
+        @Model.Osoba.Email
+        @if (!string.IsNullOrWhiteSpace(Model.Osoba.Telefon))
+        {
+            <text> · @Model.Osoba.Telefon</text>
+        }
+        · @Model.Osoba.Miasto
+    </p>
+    <p>@Model.Osoba.OMnie</p>
+</header>
+
+<section class="mb-4">
+    <h2>Doświadczenie</h2>
+    @foreach (var d in Model.Doswiadczenia.OrderByDescending(d => d.DataOd))
+    {
+        <div class="mb-3">
+            <h5>@d.Stanowisko — @d.Firma</h5>
+            <small class="text-muted">
+                @d.DataOd.ToString("MM.yyyy") – @(d.DataDo?.ToString("MM.yyyy") ?? "obecnie") · @d.CzasTrwania mies.
+            </small>
+            <p>@d.Opis</p>
+        </div>
+    }
+</section>
+
+<section class="mb-4">
+    <h2>Wykształcenie</h2>
+    @foreach (var w in Model.Wyksztalcenia.OrderByDescending(w => w.DataOd))
+    {
+        <div class="mb-3">
+            <h5>@w.Kierunek — @w.Uczelnia</h5>
+            <small class="text-muted">
+                @w.DataOd.ToString("MM.yyyy") – @(w.DataDo?.ToString("MM.yyyy") ?? "obecnie")
+                · studia @w.Tytul.ToLower(), @w.Forma.ToLower()
+            </small>
+        </div>
+    }
+</section>
+
+<section class="mb-4">
+    <h2>Projekty</h2>
+    @foreach (var p in Model.Projekty)
+    {
+        <div class="mb-3">
+            <h5>@p.Nazwa</h5>
+            <p>@p.Opis</p>
+            @if (!string.IsNullOrWhiteSpace(p.LinkRepozytorium))
+            {
+                <a href="@p.LinkRepozytorium">@p.LinkRepozytorium</a>
+            }
+        </div>
+    }
+</section>
+
+<section>
+    <h2>Umiejętności</h2>
+    @foreach (var grupa in Model.Umiejetnosci.GroupBy(u => u.Kategoria))
+    {
+        <h5 class="mt-3">@grupa.Key</h5>
+        @foreach (var u in grupa.OrderByDescending(u => u.Poziom))
+        {
+            <div class="mb-2">
+                <span>@u.Nazwa</span>
+                <div class="progress" role="progressbar" aria-label="@u.Nazwa"
+                     aria-valuenow="@u.Poziom" aria-valuemin="1" aria-valuemax="5">
+                    <div class="progress-bar bg-success" style="width: @(u.Poziom * 20)%"></div>
+                </div>
+            </div>
+        }
+    }
+</section>
